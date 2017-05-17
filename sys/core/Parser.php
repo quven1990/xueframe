@@ -29,8 +29,22 @@ class Parser
             $this->content = preg_replace($patter,"<?php echo \$this->vars['$1']; ?>",$this->content);
         }
     }
+   //解析if
+    private function parIf(){
 
-    //private function parIf()
+    }
+    //解析循环数据
+    private function parWhile(){
+
+    }
+    //解析系统函数
+    private function parSys(){
+
+    }
+    //解析function
+    private function parFunc(){
+
+    }
       //编译
     public function compile($file_path,$file_name){
         $this->parVar();

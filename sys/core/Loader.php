@@ -76,7 +76,6 @@ class Loader
 
             // 剩余的就是相对类名称
             $relative_class = substr($class, $pos + 1);
-
             // 利用命名空间前缀和相对类名来加载映射文件
             $mapped_file = self::loadMappedFile($prefix, $relative_class);
             if ($mapped_file) {
@@ -105,6 +104,7 @@ class Loader
         if (isset(self::$prefixes[$prefix]) === false) {
             return false;
         }
+
         // 遍历命名空间前缀的base目录
         foreach (self::$prefixes[$prefix] as $base_dir) {
 

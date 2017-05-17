@@ -19,8 +19,9 @@ class View
 
     function __construct($vars =[])
     {
-        if (!is_dir(Config::get('cache_path')) || !is_dir(Config::get('compile_path')) || !is_dir(Config::get('view_path'))) {
-          //  exit('The directory does not exist');
+        //if (!is_dir(Config::get('cache_path')) || !is_dir(Config::get('compile_path')) || !is_dir(Config::get('view_path'))) {
+        if (!is_dir(Config::get('cache_path')) || !is_dir(Config::get('compile_path'))) {
+            exit('The directory does not exist');
         }
         $this->vars = $vars;
     }

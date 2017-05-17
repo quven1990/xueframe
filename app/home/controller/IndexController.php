@@ -15,6 +15,7 @@ class IndexController extends Controller
 {
     public function index()
     {
-        echo "successful";
+       $this->assign('name','xuehao');
+       $this->display('index');
     }
 }
