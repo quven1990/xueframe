@@ -15,7 +15,7 @@ use core\Parser;    //使用模板解析类
 class View
 {
     //模板变量
-    public $vars = [];
+    public $_vars = [];
 
     function __construct($vars =[])
     {
@@ -23,7 +23,8 @@ class View
         if (!is_dir(Config::get('cache_path')) || !is_dir(Config::get('compile_path'))) {
             exit('The directory does not exist');
         }
-        $this->vars = $vars;
+        $this->_vars = $vars;
+        $this->_config = Config::get();
     }
     //展示模板
     public function display($file)

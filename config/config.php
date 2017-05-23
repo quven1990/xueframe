@@ -27,7 +27,7 @@ return [
     //'view_path'    => APP_PATH .'home' . DS . 'view' . DS,    // 模板路径
     'view_suffix'  => '.php',    // 模板后缀
 
-    'auto_cache'     => true,    //开启自动缓存
+    'auto_cache'     => false,    //开启自动缓存
     'url_html_suffix'        => 'html',     // URL伪静态后缀
 
 ];
