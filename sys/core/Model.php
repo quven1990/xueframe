@@ -83,6 +83,9 @@ class Model
     /*新增数据*/
     public function save($data = [])
     {
+        if(empty($data)){
+            return false;
+        }
         $keys = '';
         $values = '';
         foreach ($data as $key => $value) {
@@ -234,6 +237,12 @@ class Model
                 echo "File $filename cannot write";
             }
         }
+    }
+    /*
+     * 释放连接
+     */
+    protected function __destruct(){
+        $this->db = null;
     }
 
 }

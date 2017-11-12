@@ -8,6 +8,7 @@
 namespace home\controller;
 
 use core\Controller;
+use core\traits;
 /**
  * index控制器
  */
@@ -26,6 +27,8 @@ class IndexController extends Controller
        $this->assign('name','xuehao');
        $this->assign('check',true);
        $this->assign('data',$data);
-       $this->display('index');
+
+       $this->display();
     }
+
 }

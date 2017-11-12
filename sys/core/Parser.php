@@ -96,7 +96,7 @@ class Parser
         }
     }
 
-    //解析系统函数
+    //解析系统函数 config.php中的变量
     private function parSys(){
         $_pattern = '/<!--\{(\w+)\}-->/';
         if(preg_match($_pattern, $this->content,$_file)){
