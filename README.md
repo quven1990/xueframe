@@ -1,4 +1,4 @@
-# frame
+# xueframe
 
 搭建环境之后一定要把Runtime目录设置成可写的
 
