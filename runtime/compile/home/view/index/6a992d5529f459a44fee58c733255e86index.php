@@ -39,22 +39,22 @@
 <div class="container">
     <div class="content">
         <div class="title">Lab Framework</div>
-        <span class="line"><b>{$name}</b></span>
+        <span class="line"><b><?php echo $this->_vars['name']; ?></b></span>
         <br/>
         <span class="line"><b>
-        {if $check}
+        <?php if($this->_vars['check']){ ?>
         结果为真
-        {else}
+        <?php }else{ ?>
         结果为假
-        {/if}
+        <?php } ?>
         </b></span><br/>
-        {foreach $data(key,value)}
-        <span class="line">{@key}....{@value}</span> <br />
-        {/foreach}
-        {include "a.html"}
-        {#}这里是注释内容 不出意外你应该看不到{#}<br/>
+        <?php foreach($this->_vars['data'] as $key=>$value){?>
+        <span class="line"><?php echo $key?>....<?php echo $value?></span> <br />
+        <?php } ?>
+        <?php include 'a.html';?>
+        <?php /*(这里是注释内容 不出意外你应该看不到) */?><br/>
 
-        <!--{db_host}-->
+        <?php echo $this->_config['db_host'] ?>
 
     </div>
 </div>

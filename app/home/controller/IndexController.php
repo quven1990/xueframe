@@ -16,6 +16,8 @@ class IndexController extends Controller
 {
     public function index()
     {
+        ini_set("display_errors", "On");
+        error_reporting(E_ALL | E_STRICT);
        $data = [
            'a' => 1,
            'b' => 2,
@@ -23,7 +25,6 @@ class IndexController extends Controller
            'd' => 4,
            'e' => 5,
        ];
-
        $this->assign('name','xuehao');
        $this->assign('check',true);
        $this->assign('data',$data);
