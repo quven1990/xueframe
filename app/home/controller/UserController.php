@@ -9,6 +9,7 @@ namespace home\controller;
 
 use core\Controller;
 use core\Redis;
+use core\Cookie;
 use home\model\UserModel;
 /**
  * user控制器
@@ -17,13 +18,14 @@ class UserController extends Controller
 {
     public function login()
     {
-        $config = [
-            'host' => '192.168.1.107'
-        ];
-        $redis = Redis::getInstance($config);
-//print_r($redis);die();
-         $name = $redis->get('name');
-        echo $name;die();
+        $obj = new Cookie('dingdang', 10);
+        
+         $data = array(  
+                         'name' => 'fdipzone',  
+                                     'gender' => 'male'  
+                                             );  
+                $obj->set('me', $data, 5);  
+
     }
     public function register(){
 

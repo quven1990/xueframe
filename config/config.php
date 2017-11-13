@@ -29,5 +29,10 @@ return [
 
     'auto_cache'     => false,    //开启自动缓存
     'url_html_suffix'        => 'html',     // URL伪静态后缀
-
+    //redis相关配置
+    'redis_host'  => '127.0.0.1',
+    'redis_default_port' => 6379,
+    'redis_auth'  => '',
+    //是否打开调试模式
+    'debug'    => 1,   //0为关闭警告和错误 1为开启警告和错误(即调试模式)
 ];

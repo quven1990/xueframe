@@ -1,5 +1,6 @@
 <?php
 namespace core;
+use core\Config;
 /**
  * redis操作类
  * 说明，任何为false的串，存在redis中都是空串。
@@ -47,17 +48,20 @@ class Redis
     {
         $this->attr        =    array_merge($this->attr,$attr);
         $this->redis    =    new \Redis();  //注意namespace
-        $this->port        =    $config['port'] ? $config['port'] : 6379;
-        $this->host        =    $config['host'];
+        $this->port        =    isset($config['port']) ? $config['port'] : Config::get('redis_default_port');
+        $this->host        =    isset($config['host']) ? $config['host'] : Config::get('redis_host');
         $this->redis->connect($this->host, $this->port, $this->attr['timeout']);
 
-        if($config['auth'])
+        if(!empty($config['auth']))
         {
             $this->auth($config['auth']);
             $this->auth    =    $config['auth'];
+        }else{
+            $this->auth(Config::get('redis_auth'));
+            $this->auth    =    Config::get('redis_auth'); 
         }
 
-        $this->expireTime    =    time() + $this->attr['timeout'];
+        $this->expireTime  =    time() + $this->attr['timeout'];
     }
 
     /**
@@ -68,7 +72,7 @@ class Redis
      * @param int $dbId
      * @return \iphp\db\Redis
      */
-    public static function getInstance($config, $attr = array())
+    public static function getInstance($config=array(), $attr = array())
     {
         //如果是一个字符串，将其认为是数据库的ID号。以简化写法。
         if(!is_array($attr))
@@ -77,8 +81,8 @@ class Redis
             $attr    =    array();
             $attr['db_id']    =    $dbId;
         }
-
-        $attr['db_id']    =    $attr['db_id'] ? $attr['db_id'] : 0;
+        
+        $attr['db_id']    =    (isset($attr['db_id']) && $attr['db_id'] != null) ? $attr['db_id'] : 0;
 
 
         $k    =    md5(implode('', $config).$attr['db_id']);
