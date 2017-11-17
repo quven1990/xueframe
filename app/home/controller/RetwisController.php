@@ -53,7 +53,7 @@ class RetwisController extends Controller
      * @return void
      */
 	public function login(){
-		Jump::success("123","/home/retwis/index");
+		Jump::error("123",3);
 		
 		exit;
 	}

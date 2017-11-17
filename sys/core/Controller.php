@@ -32,9 +32,10 @@ class Controller
         $this->tpl = $tpl;
     }
     //模板展示
-    final protected function display()
+    final protected function display($tpl = '')
     {
         $view = new View($this->vars);    //调用视图类
-        $view->display($this->tpl);    //视图类展示方法
+        $tpl ? $this->tpl = $tpl : 1;
+		$view->display($this->tpl);    //视图类展示方法
     }
 }
