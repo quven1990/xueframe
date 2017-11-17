@@ -60,10 +60,16 @@ class View
         }
 
         //是否需要重新编译模板
-        if (!file_exists($parser_file) || filemtime($parser_file) < filemtime($tpl_file)) {
-            $parser = new Parser($tpl_file);
-            $parser->compile($parser_file_path,$parser_file_name);
-        }
+		if (Config::get('auto_compile_cache')) {
+			if (!file_exists($parser_file) || filemtime($parser_file) < filemtime($tpl_file)) {
+				$parser = new Parser($tpl_file);
+				$parser->compile($parser_file_path,$parser_file_name);
+			}
+		}else{  //如果关闭了模板编译缓存，则每次加载都需要重新编译模板
+			$parser = new Parser($tpl_file);
+			$parser->compile($parser_file_path,$parser_file_name);
+		}
+		
         include $parser_file;    //引入编译文件
 
         //若开启了自动缓存则缓存模板
@@ -76,5 +82,6 @@ class View
             ob_end_clean();
             echo $content;
         }
+		exit;
     }
 }

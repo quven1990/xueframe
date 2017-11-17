@@ -28,6 +28,7 @@ return [
     'view_suffix'  => '.php',    // 模板后缀
 
     'auto_cache'     => false,    //开启自动缓存
+	'auto_compile_cache'  => true,  //开启模板编译缓存
     'url_html_suffix'        => 'html',     // URL伪静态后缀
     //redis相关配置
     'redis_host'  => '127.0.0.1',

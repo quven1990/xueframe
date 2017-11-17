@@ -16,21 +16,8 @@ trait Jump{
      * @return void
      */
     public static function success($mess="操作成功", $timeout=1, $location=""){
-		Config::set("auto_cache",false);  //关闭模板缓存
 		$location = self::makeLocation($location);
-		
-		$assign_data = [   //assign到模板的内容
-			'mark' => true,
-			'mess' => $mess,
-			'timeout' => $timeout,
-			'location' => $location
-		];
-		$view = new View($assign_data);    //调用视图类
-		
-		$display_file = static::getTpl();
-		$view->display($display_file);    //视图类展示方法
-       
-		
+		self::echoTplHtml(true,$mess,$timeout,$location);//直接输出模板	
     }
 	/**
      * error 失败提示页面
@@ -38,31 +25,8 @@ trait Jump{
      * @return void
      */
 	public static function error($mess="操作失败", $timeout=3, $location=""){
-		Config::set("auto_cache",false);  //关闭模板缓存
 		$location = Jump::makeLocation($location);
-		
-		$assign_data = [
-			'mark' => false,
-			'mess'  => $mess,
-			'timeout' => $timeout,
-			'location' => $location
-		];
-		
-		$view = new View($assign_data);    //调用视图类
-		
-		$display_file = static::getTpl();
-		$view->display($display_file);    //视图类展示方法	
-		
-	}
-	/**
-     * getTpl  获取模板地址 
-     * @access private
-     * @return void
-     */
-	private static function getTpl(){
-		$module = Config::get("default_module");	
-		$tpl = $module.DS."view".DS."common".DS."success";  //提示模板文件目录
-		return $tpl;
+		self::echoTplHtml(false,$mess,$timeout,$location); //直接输出模板
 	}
 	/**
      * makeLocation  对location进行单独处理 
@@ -83,5 +47,68 @@ trait Jump{
 			$location="window.location='{$location}'";
 		}
 		return $location;
+	}
+	/**
+     * echoTplHtml  输出模板页面 
+     * @access private
+     * @return void
+     */
+	private static function echoTplHtml($mark,$mess,$timeout,$location){
+		echo '
+		<html>
+		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<title>提示消息 - BroPHP</title>
+
+			<style type="text/css">
+				body { font: 75% Arail; text-align: center; }
+				#notice { width: 300px; background: #FFF; border: 1px solid #BBB; background: #EEE; padding: 3px;
+				position: absolute; left: 50%; top: 50%; margin-left: -155px; margin-top: -100px; }
+				#notice div { background: #FFF; padding: 30px 0 20px; font-size: 1.2em; font-weight:bold }
+				#notice p { background: #FFF; margin: 0; padding: 0 0 20px; }
+				a { color: #f00} a:hover { text-decoration: none; }
+				
+			</style>
+		</head>
+		<body>
+		<div id="notice">
+			<div style="width:100%;text-align:left;padding-left:10px;padding-right:10px">'.$mess.'</div>';
+			if ($mark){
+			echo '
+				<p style="font: italic bold 2cm cursive,serif; color:green">
+					√ 
+				</p>';
+			}else{
+			echo '
+				<p style="font: italic bold 2cm cursive,serif; color:red">
+					×
+			</p>';
+			};
+			echo '
+			<p>
+				 在( <span id="sec" style="color:blue;font-weight:bold">'.$timeout.'</span> )秒后自动跳转，或直接点击 <a href="javascript:'.$location.'">这里</a> 跳转<br>
+				 <span style="display:block;text-decoration:underline;cursor:pointer;line-height:25px" onclick="stop(this)">停止</span>
+	
+			</p>
+		 </div>	
+			<script>
+		 		var seco=document.getElementById("sec");
+				var time='.$timeout.';
+				var tt=setInterval(function(){
+						time--;
+						seco.innerHTML=time;	
+						if(time<=0){
+							'.$location.';
+							return;
+						}
+					}, 1000);
+				function stop(obj){
+					clearInterval(tt);
+					obj.style.display="none";
+				}
+			</script>
+		</body>
+		</html>';
+		exit;
 	}
 }

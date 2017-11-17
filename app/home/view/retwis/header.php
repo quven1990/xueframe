@@ -8,7 +8,7 @@
 <body>
 <div id="page">
 <div id="header">
-<a href="/"><img style="border:none" src="/static/retwis/images/logo.png" width="192" height="85" alt="Retwis"></a>
+<a href="javascript:void(0)"><img style="border:none" src="/static/retwis/images/logo.png" width="192" height="85" alt="Retwis"></a>
 <div id="navbar">
 <a href="/home/retwis/index">主页</a>
 | <a href="/home/retwis/timeline">热点</a>

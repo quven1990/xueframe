@@ -598,6 +598,15 @@ class Redis
     {
         return $this->redis->mset($arr);
     }
+	 /**
+     * 对key进行自增操作
+     * @param unknown $key
+     * @param unknown $value
+     */
+    public function incr($key)
+    {
+        return $this->redis->incr($key);
+    }
 
     /*************redis　无序集合操作命令*****************/
 

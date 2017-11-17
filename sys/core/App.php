@@ -56,6 +56,9 @@ class App
             $controllerName = new $className;    //实例化具体的控制器
             //判断访问的方法是否存在
             if (method_exists($controllerName,$action)) {
+				$controllerName->controller_name = $controllerName;
+				$controllerName->action_name = $action;
+				
                 $tpl =strtolower($module.DS."view".DS.$controller.DS.$action);
                 $controllerName->setTpl($tpl);    //设置方法对应的视图模板
                 $controllerName->$action();        //执行该方法

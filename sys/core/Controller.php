@@ -15,7 +15,8 @@ class Controller
 {
     protected $vars = [];    //模板变量
     protected $tpl;        //视图模板
-
+	public $controller_name;  //保存当前页面控制器名称
+	public $action_name;     //保存当前页面action名称
     //变量赋值
     final protected function assign($name,$value = '')
     {
