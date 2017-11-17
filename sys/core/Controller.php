@@ -34,7 +34,6 @@ class Controller
     //模板展示
     final protected function display()
     {
-
         $view = new View($this->vars);    //调用视图类
         $view->display($this->tpl);    //视图类展示方法
     }

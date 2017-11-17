@@ -6,12 +6,16 @@
  * Time: 下午3:33
  */
 namespace core\traits;
+use core\Config
 
 trait Jump
 {
     public static function success($msg = '',$url = '',$data = '')
     {
-        $code = 1;
+		Config::set();
+		$mark = true;
+        /*
+		$code = 1;
         if (is_numeric($msg)) {
             $code = $msg;
             $msg = '';
@@ -26,8 +30,11 @@ trait Jump
             'url'     => $url,    //跳转url
         ];
         $output = 'code:'.$result['code'].'\n'.'msg:'.$result['msg'].'\n'.'data:'.$result['data'];
-        echo "<script> alert('$output');location.href='".$result['url']."'</script>";
-        exit();
+       // echo "<script> alert('$output');location.href='".$result['url']."'</script>";
+        //$this->display();
+		exit();
+		*/
+		require_once("./a.html");
     }
 
     public static function error($msg = '',$url = '',$data = '')
