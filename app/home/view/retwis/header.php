@@ -12,8 +12,12 @@
 <div id="navbar">
 <a href="/home/retwis/index">主页</a>
 | <a href="/home/retwis/timeline">热点</a>
-
-| <a href="javascript:alert('暂未开发')">退出</a>
+    <!--此处需要优化   include进来的内容暂时无法解析  只能输出原生php代码-->
+    <?php if ($this->_vars['login_status']) { ?>
+| <a href="/home/retwis/loginOut">退出</a>
+    <?php
+    }
+    ?>
 
 </div>
 </div>

@@ -86,6 +86,8 @@ class Parser
             }
             //替换内容
             $this->content = preg_replace($_pattern, "<?php include '$1';?>", $this->content);
+            //$include_content = file_get_contents($_file[1]);
+
         }
     }
     //解析单行PHP注释

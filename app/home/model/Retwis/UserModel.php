@@ -7,6 +7,7 @@
  */
 namespace home\model\Retwis;
 use core\Redis;
+use core\Cookie;
 /*
  * 用户模型
  */
@@ -23,10 +24,11 @@ class UserModel {
      * @return void
      */
 	public function __construct(){
-		$this->_username_key = "user:user_id:%d:username";
-		$this->_userpassword_key = "user:user_id:%d:password";
-		$this->_global_user_incr_key = "user:incr:key";
-		$this->_user_id_from_username_key = "user:username:%s:user_id";
+		$this->_username_key = "user:user_id:%d:username";  //通过userid查询username
+		$this->_userpassword_key = "user:user_id:%d:password"; //通过userid查询password
+		$this->_global_user_incr_key = "user:incr:key"; //user 表自增id
+		$this->_user_id_from_username_key = "user:username:%s:user_id"; //通过username查询userid
+        $this->_user_register_len = "user_register_len"; //记录最新注册的50个用户的username
 		$this->_redis = Redis::getInstance();
 	}
 	/**
@@ -53,6 +55,10 @@ class UserModel {
 		//加入冗余数据,用于用username查找user_id
 		$user_id_from_user_name_redis_key = sprintf($this->_user_id_from_username_key,$username);  //用于判断username是否存在
 		$this->_redis->set($user_id_from_user_name_redis_key,$primary_key);
+        //记录最新注册的50个用户
+        $this->_redis->lPush($this->_user_register_len,$username);
+        $this->_redis->lTrim($this->_user_register_len,0,49);
+
 		return $result;
 	}
 	/**
@@ -61,7 +67,7 @@ class UserModel {
      * @return void
      */
 	public function login($username, $password){
-		$result = ['status'=>'success','msg'=>''];
+		$result = ['status'=>'success','msg'=>'','data'=>''];
 		$user_id = $this->check_user_exists($username);
 		if(!$user_id){
 			$result['status'] = 'error';
@@ -76,7 +82,14 @@ class UserModel {
 			return $result;
 		}
 		//写入cookie操作
-		return $result;
+        $cookie = new Cookie("user");
+        $cookie->set("user_id",$user_id);
+        $cookie->set("username",$username);
+        $result['data'] = [
+            'user_id'=>$user_id,
+            'username' => $username
+        ];
+        return $result;
 	} 
 	/**
      * check_user_exists 检测用户是否存在
@@ -88,6 +101,15 @@ class UserModel {
 		$user_id = $this->_redis->get($user_id_from_user_name_redis_key);
 		return $user_id;
 	}
+    /**
+     * getNewers 获取最新的注册用户列表
+     * @access public
+     * @return void
+     */
+    public function getNewers(){
+        $user_list = $this->_redis->lRange($this->_user_register_len,0,-1);
+        return $user_list;
+    }
 	/**
      * getUserPrimaryKey 获取user表的主键
      * @access private

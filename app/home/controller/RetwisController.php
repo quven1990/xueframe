@@ -10,20 +10,31 @@ namespace home\controller;
 use core\Controller;
 use core\traits\Jump;
 use core\Input;
+use core\Cookie;
 use home\model\Retwis\UserModel;
 /**
  * index控制器
  */
 class RetwisController extends Controller
 {
-	//public $controller_name;
-	public function __construct(){
-		// parent::__construct();  //调用父类构造方法 
-		var_dump($this->controller_name);
-		var_dump($this->action_name);
-		
-	}
-	/**
+    private $_user_id;  //用户id
+    private $_username;  //用户名
+    private $_login_status = false;//用户登陆状态
+
+    public function __construct(){
+	    $cookie = new Cookie('user');
+        $this->_user_id = $cookie->get('user_id');
+        $this->_username = $cookie->get('username');
+        if($this->_user_id && $this->_username){
+            $this->_login_status = true;
+        }
+       // var_dump($this->_login_status);
+
+        $this->assign('user_id',$this->_user_id);
+        $this->assign('username',$this->_username);
+        $this->assign('login_status',$this->_login_status);
+    }
+    /**
      * index 主页
      * @access public
      * @return void
@@ -36,15 +47,23 @@ class RetwisController extends Controller
      * @access public
      * @return void
      */
-	public function home(){	
-		$this->display();
+	public function home(){
+        if(!$this->_login_status){
+            Jump::error("请先登陆",3,"/retwis/index");
+        }
+
+        $this->display();
     }
 	/**
      * timeline 时间线列表页
      * @access public
      * @return void
      */
-	public function timeline(){	
+	public function timeline(){
+        $user_model = new UserModel();
+        $user_list = $user_model->getNewers();
+
+        $this->assign("user_list",$user_list);
 		$this->display();
     }
 	/**
@@ -71,10 +90,20 @@ class RetwisController extends Controller
 		if($res['status'] == 'error'){
 			Jump::error($res['msg'],5);
 		}
-		
-		Jump::success("登录成功",5);
+		Jump::success("登录成功",5,"/retwis/home");
 		
 	}
+    /**
+     * loginOut 退出登陆
+     * @access public
+     * @return void
+     */
+    public function loginOut(){
+        $cookie = new Cookie('user');
+        $cookie->clear('username');
+        $cookie->clear('user_id');
+        Jump::success("退出成功",5,"/retwis/index");
+    }
 	/**
      * register 注册
      * @access public
@@ -101,6 +130,22 @@ class RetwisController extends Controller
 		exit;
 		
 	}
+
+    /**
+     * publish 发表帖子
+     * @access public
+     * @return bool
+     */
+    public function publish(){
+        if(!$this->_login_status){
+            Jump::error("请先登陆",3,"/retwis/index");
+        }
+        $content = Input::post('content');
+        if(empty($content)){
+            Jump::error("请输入帖子内容",3);
+        }
+
+    }
 	
 
 }

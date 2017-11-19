@@ -481,7 +481,16 @@ class Redis
     {
         return $this->redis->lLen($key);
     }
-
+    /**
+     * 列表只保留指定区间内的元素
+     * @param unknown $key
+     * @param unknown $start
+     * @param unknown $end
+     */
+    public function lTrim($key,$start,$end)
+    {
+        return $this->redis->ltrim($key,$start,$end);
+    }
     /**
      * 返回队列指定区间的元素
      * @param unknown $key
