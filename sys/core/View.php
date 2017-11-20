@@ -19,9 +19,17 @@ class View
 
     function __construct($vars =[])
     {
-        if (!is_dir(Config::get('cache_path')) || !is_dir(Config::get('compile_path'))) {
-            exit('The directory does not exist');
+        //if (!is_dir(Config::get('cache_path')) || !is_dir(Config::get('compile_path'))) {
+        //    exit('The directory does not exist');
+        //}
+        if(!is_dir(Config::get('cache_path'))){ // 缺少缓存目录直接自动创建
+            mkdir(Config::get('cache_path'), 0700);
         }
+        
+        if(!is_dir(Config::get('compile_path'))){  //缺少模板编译目录直接创建
+            mkdir(Config::get('compile_path'), 0700);
+        }
+
         $this->_vars = $vars;
         $this->_config = Config::get();  //为了编译模版能解析config文件而加入的
     }
