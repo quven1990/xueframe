@@ -491,6 +491,13 @@ class Redis
     {
         return $this->redis->ltrim($key,$start,$end);
     }
+	/**
+     * 排序
+     * @param unknown $key
+     */
+	public function sort($key,$array=array()){
+		return $this->redis->sort($key,$array);
+	}
     /**
      * 返回队列指定区间的元素
      * @param unknown $key

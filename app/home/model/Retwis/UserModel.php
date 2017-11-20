@@ -28,7 +28,7 @@ class UserModel {
 		$this->_userpassword_key = "user:user_id:%d:password"; //通过userid查询password
 		$this->_global_user_incr_key = "user:incr:key"; //user 表自增id
 		$this->_user_id_from_username_key = "user:username:%s:user_id"; //通过username查询userid
-        $this->_user_register_len = "user_register_len"; //记录最新注册的50个用户的username
+        $this->_user_register_len = "user_register_len"; //记录最新注册的50个用户的user_id
 		$this->_redis = Redis::getInstance();
 	}
 	/**
@@ -56,7 +56,7 @@ class UserModel {
 		$user_id_from_user_name_redis_key = sprintf($this->_user_id_from_username_key,$username);  //用于判断username是否存在
 		$this->_redis->set($user_id_from_user_name_redis_key,$primary_key);
         //记录最新注册的50个用户
-        $this->_redis->lPush($this->_user_register_len,$username);
+        $this->_redis->lPush($this->_user_register_len,$primary_key);
         $this->_redis->lTrim($this->_user_register_len,0,49);
 
 		return $result;
@@ -107,8 +107,19 @@ class UserModel {
      * @return void
      */
     public function getNewers(){
-        $user_list = $this->_redis->lRange($this->_user_register_len,0,-1);
-        return $user_list;
+		$user_list = [];
+		$sort = [
+			'get'=>['#',str_replace("%d","*",$this->_username_key)]
+		];
+        $list = $this->_redis->sort($this->_user_register_len,$sort);
+		foreach($list as $key=>$val){
+			if($key % 2 == 0){
+				$k = $val;
+			}else{
+				$user_list[$k] = $val;
+			}	
+		}
+		return $user_list;
     }
 	/**
      * getUserPrimaryKey 获取user表的主键

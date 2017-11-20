@@ -12,6 +12,7 @@ use core\traits\Jump;
 use core\Input;
 use core\Cookie;
 use home\model\Retwis\UserModel;
+use home\model\Retwis\PostModel;
 /**
  * index控制器
  */
@@ -60,6 +61,9 @@ class RetwisController extends Controller
      * @return void
      */
 	public function timeline(){
+		if(!$this->_login_status){
+            Jump::error("请先登陆",3,"/retwis/index");
+        }
         $user_model = new UserModel();
         $user_list = $user_model->getNewers();
 
@@ -71,7 +75,12 @@ class RetwisController extends Controller
      * @access public
      * @return void
      */
-	public function profile(){	
+	public function profile($id){
+		if(!$this->_login_status){
+            Jump::error("请先登陆",3,"/retwis/index");
+        }		
+		var_dump($id);
+		
 		$this->display();
     }
 	
@@ -144,8 +153,14 @@ class RetwisController extends Controller
         if(empty($content)){
             Jump::error("请输入帖子内容",3);
         }
-
-    }
+		$post_model = new PostModel();
+		$res = $post_model->publish($this->_user_id,$this->_username,$content);
+		if($res){
+			Jump::success("发布成功",3);
+		}else{
+			Jump::error("发布失败",3);
+		}
+	}
 	
 
 }

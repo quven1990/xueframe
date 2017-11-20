@@ -95,12 +95,15 @@ class Router
             if ($arr[1] == 'index.php') {   //以 'localhost:8080/index.php'开始
                 if (isset($arr[2]) && !empty($arr[2])) {
                     $this->route_url['module'] = $arr[2];
+					unset($arr[2]);
                 }
                 if (isset($arr[3]) && !empty($arr[3])) {
                     $this->route_url['controller'] = $arr[3];
+					unset($arr[3]);
                 }
                 if (isset($arr[4]) && !empty($arr[4])) {
                     $this->route_url['action'] = $arr[4];
+					unset($arr[4]);
                 }
                 //判断url后缀名
                 if (isset($this->route_url['action']) && strpos($this->route_url['action'],'.')) {
@@ -113,13 +116,25 @@ class Router
             } else {                        //直接以 'localhost:8080'开始
                 if (isset($arr[1]) && !empty($arr[1])) {
                     $this->route_url['module'] = $arr[1];
+					unset($arr[1]);
                 }
                 if (isset($arr[2]) && !empty($arr[2])) {
                     $this->route_url['controller'] = $arr[2];
+					unset($arr[2]);
                 }
                 if (isset($arr[3]) && !empty($arr[3])) {
                     $this->route_url['action'] = $arr[3];
+					unset($arr[3]);
                 }
+				$arr = array_filter($arr);
+				$arr = array_values($arr);
+				for($i = 0; $i<count($arr); $i++){  //除了module  controller  action以外的pathinfo参数赋值
+					if($i % 2 == 0){
+						$k = $arr[$i];
+					}else{
+						$this->route_url['params'][$k] = $arr[$i];  
+					}	
+				}
             }
         } else {
             $this->route_url = [];

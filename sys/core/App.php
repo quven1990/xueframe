@@ -27,7 +27,7 @@ class App
     //路由分发
     public static function dispatch($url_array = [])
     {
-        $module = '';
+		$module = '';
         $controller = '';
         $action= '';
         if (isset($url_array['module'])) {    //若路由中存在 module，则设置当前模块
@@ -58,7 +58,17 @@ class App
             if (method_exists($controllerName,$action)) {
                 $tpl =strtolower($module.DS."view".DS.$controller.DS.$action);
                 $controllerName->setTpl($tpl);    //设置方法对应的视图模板
-                $controllerName->$action();        //执行该方法
+                $params = $url_array['params'];  //pathinfo形式传入的参数
+				/*
+				$res = '';
+				foreach($params as $k=>$v){
+					$res .= $k."=".$v.",";
+				}
+				//$res = trim($res,",");
+				//echo $res;die();*/
+				!empty($params) ? $params = implode(",",$params) : 1;
+				//echo $params;die();
+				$controllerName->$action($params);        //执行该方法
             } else {
                 die('The method does not exist');
             }
