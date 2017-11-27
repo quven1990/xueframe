@@ -9,12 +9,14 @@
 </table>
 </form>
 <div id="homeinfobox">
-0 粉丝<br>
-0 关注<br>
+{$follower_count}  粉丝<br>
+{$follow_count} 关注<br>
 </div>
 </div>
+{foreach $content_list(key,value)}
 <div class="post">
-<a class="username" href="profile.php?u=test">test</a> hello<br>
-<i>11 分钟前 通过 web发布</i>
+<a class="username" href="/home/retwis/profile/user_id/{@value['user_id']}">{@value['username']}</a>{@value['content']}<br>
+<i>{@value['time']}前 通过 web发布</i>
 </div>
+{/foreach}
 {include "app/home/view/retwis/footer.php"}

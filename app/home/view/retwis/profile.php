@@ -1,12 +1,11 @@
 {include "app/home/view/retwis/header.php"}
-<h2 class="username">test</h2>
-<a href="follow.php?uid=1&f=1" class="button">关注ta</a>
+<h2 class="username">{$username}</h2>
 
-<div class="post">
-<a class="username" href="profile.php?u=test">test</a> 
-world<br>
-<i>11 分钟前 通过 web发布</i>
-</div>
+{if $follow_status}
+<a href="/home/retwis/unFollow/user_id/{$user_id}" class="button">取消关注</a>  
+{else}
+<a href="/home/retwis/follow/user_id/{$user_id}" class="button">关注ta</a>  
+{/if}   
 
 <div class="post">
 <a class="username" href="profile.php?u=test">test</a>

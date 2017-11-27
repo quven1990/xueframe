@@ -24,7 +24,8 @@ class Parser
     private function parVar()
     {
         $patter = '/\{\$([\w]+)\}/';
-        $repVar = preg_match($patter,$this->content);
+        //$patter = '/\{\$(([\w]+)|([\w]+\[\'[\w]+\'\])|([\w]+\[\"[\w]+\"\]))\}/';
+        $repVar = preg_match($patter,$this->content,$res);
         if ($repVar) {
             $this->content = preg_replace($patter,"<?php echo \$this->_vars['$1']; ?>",$this->content);
         }
@@ -60,7 +61,9 @@ class Parser
         $_patternForeach = '/\{foreach\s+\$(\w+)\((\w+),(\w+)\)\}/';
         $_patternEndForeach = '/\{\/foreach\}/';
         //foreach里的值
-        $_patternVar = '/\{@(\w+)\}/';
+        //$_patternVar = '/\{@(\w+)\}/';
+        $_patternVar = '/\{@(([\w]+)|([\w]+\[\'[\w]+\'\])|([\w]+\[\"[\w]+\"\]))\}/';
+		
         //判断是否存在
         if(preg_match($_patternForeach, $this->content)){
             //判断结束标志
@@ -124,6 +127,7 @@ class Parser
         $this->parCommon();
         //解析系统变量
         $this->parSys();
+		
         if (!file_exists($file_path)) {
             @mkdir($file_path,0777,TRUE);
         }

@@ -15,6 +15,8 @@ class UserModel {
 	private $_username_key;   //username
 	private $_userpassword_key;  //password
 	private $_user_id_from_username_key;  //通过username查找user_id
+	private $_follow;  //我关注的人
+	private $_follower;  //关注我的人
 	private $_global_user_incr_key;  //user表自增id
 	private $_redis;  //redis对象
 	
@@ -29,6 +31,9 @@ class UserModel {
 		$this->_global_user_incr_key = "user:incr:key"; //user 表自增id
 		$this->_user_id_from_username_key = "user:username:%s:user_id"; //通过username查询userid
         $this->_user_register_len = "user_register_len"; //记录最新注册的50个用户的user_id
+		
+		$this->_follow = "follow:%d";
+		$this->_follower = "follower:%d";
 		$this->_redis = Redis::getInstance();
 	}
 	/**
@@ -121,6 +126,91 @@ class UserModel {
 		}
 		return $user_list;
     }
+	/**
+     * getUserInfo 获取用户详情
+     * @access public
+     * @return void
+     */
+	public function getUserInfo($user_id){
+		if(!$user_id){
+			return false;
+		}
+		$redis_key = sprintf($this->_username_key,$user_id);
+		$username = $this->_redis->get($redis_key);
+		$user_info = [
+			'user_id' =>$user_id,
+			'username' => $username
+		];
+		return $user_info;
+	}
+	/**
+     * follow 关注
+     * @access public
+     * @return void
+     */
+	public function follow($follow_user_id,$follower_user_id){
+		if(!$follow_user_id || !$follower_user_id){
+			return false;
+		}
+		$follow_key = sprintf($this->_follow,$follower_user_id);  
+		$follower_key = sprintf($this->_follower,$follow_user_id);
+		
+		$this->_redis->sAdd($follow_key,$follow_user_id);
+		$this->_redis->sAdd($follower_key,$follower_user_id);
+		
+		return true;
+	}
+	/**
+     * unFollow 取消关注
+     * @access public
+     * @return void
+     */
+	public function unFollow($user_id,$follower_user_id){
+		$follow_key = sprintf($this->_follow,$follower_user_id);
+		$follow = $this->_redis->srem($follow_key,$user_id);
+		$follower_key = sprintf($this->_follower,$user_id);
+		$follower = $this->_redis->srem($follower_key,$follower_user_id);
+		if($follow && $follower){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	/**
+     * followStatus 关注状态
+     * @access public
+     * @return void
+     */	
+	public function followStatus($user_id,$follower_user_id){
+		$follow_key = sprintf($this->_follow,$follower_user_id);
+		$follow_list = $this->_redis->sMembers($follow_key);
+		
+		$follower_key = sprintf($this->_follower,$user_id);
+		$follower_list =  $this->_redis->sMembers($follower_key);
+		
+		if(in_array($user_id,$follow_list) && in_array($follower_user_id,$follower_list)){ //关注表和粉丝表双重判断
+			return true;
+		}else{
+			return false;
+		}
+	}
+	/**
+     * followCount 粉丝数和关注数
+     * @access public
+     * @return void
+     */
+	public function followCount($user_id){
+		$follow_key = sprintf($this->_follow,$user_id);
+		$follower_key = sprintf($this->_follower,$user_id);
+		
+		$follow_count = $this->_redis->scard($follow_key);
+		$follower_count = $this->_redis->scard($follower_key);
+		return [
+			'follow_count' => $follow_count,
+			'follower_count' => $follower_count,
+		];
+	}
+	
 	/**
      * getUserPrimaryKey 获取user表的主键
      * @access private

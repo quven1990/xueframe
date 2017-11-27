@@ -50,8 +50,12 @@ class Redis
         $this->redis    =    new \Redis();  //注意namespace
         $this->port        =    isset($config['port']) ? $config['port'] : Config::get('redis_default_port');
         $this->host        =    isset($config['host']) ? $config['host'] : Config::get('redis_host');
-        $this->redis->connect($this->host, $this->port, $this->attr['timeout']);
-
+        $resourse = $this->redis->connect($this->host, $this->port, $this->attr['timeout']);
+		if(!$resourse){
+			echo "redis 连接失败";
+			exit;
+		}
+	
         if(!empty($config['auth']))
         {
             $this->auth($config['auth']);
@@ -658,7 +662,8 @@ class Redis
             $arr=$value;
         foreach($arr as $row)
             $this->redis->sAdd($key,$row);
-    }
+		
+	}
 
     /**
      * 返回无序集合的元素个数

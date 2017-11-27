@@ -52,8 +52,16 @@ class RetwisController extends Controller
         if(!$this->_login_status){
             Jump::error("请先登陆",3,"/retwis/index");
         }
-
-        $this->display();
+		$user_model = new UserModel();
+		$result = $user_model->followCount($this->_user_id);  //分析关注数
+		//帖子展示
+		$post_model = new PostModel();
+		$content_list = $post_model->contentList($this->_user_id);
+		
+		$this->assign('follow_count',$result['follow_count']);
+		$this->assign('follower_count',$result['follower_count']);
+        $this->assign('content_list',$content_list);
+		$this->display();
     }
 	/**
      * timeline 时间线列表页
@@ -75,13 +83,25 @@ class RetwisController extends Controller
      * @access public
      * @return void
      */
-	public function profile($id){
+	public function profile($user_id){
 		if(!$this->_login_status){
             Jump::error("请先登陆",3,"/retwis/index");
-        }		
-		var_dump($id);
+        }
+        if(!$user_id){
+            Jump::error('参数错误',2);
+        }
+        $user_model = new UserModel();
+        $userinfo = $user_model->getUserInfo($user_id);
+		if(!$userinfo){
+			Jump::error('没有找到对应的用户信息',2);
+		}
 		
-		$this->display();
+		$follow_status = $user_model->followStatus($user_id,$this->_user_id);
+        $this->assign('user_id',$userinfo['user_id']);
+        $this->assign("username",$userinfo['username']);
+        $this->assign("userinfo",$userinfo);
+        $this->assign("follow_status",$follow_status);
+        $this->display();
     }
 	
 	/**
@@ -161,6 +181,56 @@ class RetwisController extends Controller
 			Jump::error("发布失败",3);
 		}
 	}
+	/**
+     * follow 关注
+     * @access public
+     * @return bool
+     */
+	public function follow($user_id){
+		if(!$this->_login_status){
+            Jump::error("请先登陆",3,"/retwis/index");
+        }
+		$user_model = new UserModel();
+        $userinfo = $user_model->getUserInfo($user_id);
+		if(!$userinfo){
+			Jump::error('没有找到对应的用户信息',2);
+		}
+		if($user_id == $this->_user_id){
+			Jump::error('不能关注自己',2);
+		}
+		
+		$res = $user_model->follow($user_id,$this->_user_id);
+		if($res){
+			Jump::success("关注成功",2);
+		}else{
+			Jump::error('关注失败',2);
+		}
+	}
+	/**
+     * unFollow 关注
+     * @access public
+     * @return bool
+     */
+	public function unFollow($user_id){
+		if(!$this->_login_status){
+            Jump::error("请先登陆",3,"/retwis/index");
+        }
+		$user_model = new UserModel();
+        $userinfo = $user_model->getUserInfo($user_id);
+		if(!$userinfo){
+			Jump::error('没有找到对应的用户信息',2);
+		}
+		if($user_id == $this->_user_id){
+			Jump::error('不能取消关注自己',2);
+		}
+		
+		$res = $user_model->unFollow($user_id,$this->_user_id);
+		if($res){
+			Jump::success("取消关注成功",2);
+		}else{
+			Jump::error('取消关注失败',2);
+		}
+	} 	
 	
 
 }

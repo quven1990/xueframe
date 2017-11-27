@@ -35,7 +35,7 @@ trait Jump{
      */
 	private static function makeLocation($location){
 		if($location==""){
-			$location= "window.history.back()";
+			$location= "window.location.href = document.referrer;";
 		}else{
 			$path=trim($location, "/");
 			if(strstr($path, "/")){
