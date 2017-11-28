@@ -41,6 +41,9 @@ class RetwisController extends Controller
      * @return void
      */
 	public function index(){
+		if($this->_login_status){
+			Jump::redirect("/retwis/home");
+		}
 		$this->display();
     }
 	/**
@@ -128,9 +131,9 @@ class RetwisController extends Controller
      * @return void
      */
     public function loginOut(){
-        $cookie = new Cookie('user');
-        $cookie->clear('username');
-        $cookie->clear('user_id');
+        $user_model = new UserModel();
+		$user_model->loginOut();
+		
         Jump::success("退出成功",5,"/retwis/index");
     }
 	/**

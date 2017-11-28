@@ -18,6 +18,7 @@ class UserModel {
 	private $_follow;  //我关注的人
 	private $_follower;  //关注我的人
 	private $_global_user_incr_key;  //user表自增id
+	private $_user_login_status;  //用户登录状态
 	private $_redis;  //redis对象
 	
 	/**
@@ -31,6 +32,7 @@ class UserModel {
 		$this->_global_user_incr_key = "user:incr:key"; //user 表自增id
 		$this->_user_id_from_username_key = "user:username:%s:user_id"; //通过username查询userid
         $this->_user_register_len = "user_register_len"; //记录最新注册的50个用户的user_id
+		$this->_user_login_status = "user:login:%d"; //用户登录状态
 		
 		$this->_follow = "follow:%d";
 		$this->_follower = "follower:%d";
@@ -79,6 +81,15 @@ class UserModel {
 			$result['msg'] = '该用户不存在';
 			return $result;
 		}
+		//检测用户是否登录
+		$login_status_key = sprintf($this->_user_login_status,$user_id);
+		$login_status = $this->_redis->get($login_status_key);
+		if($login_status){
+			$result['status'] = 'error';
+			$result['msg'] = '该用户已在别处登录,有问题请联系管理员';
+			return $result;
+		}
+		
 		$user_password_redis_key = sprintf($this->_userpassword_key,$user_id);
 		$password_from_redis = $this->_redis->get($user_password_redis_key);
 		if($password != $password_from_redis){
@@ -90,12 +101,27 @@ class UserModel {
         $cookie = new Cookie("user");
         $cookie->set("user_id",$user_id);
         $cookie->set("username",$username);
+		//记录用户登录状态
+		$this->_redis->set($login_status_key,$user_id);
         $result['data'] = [
             'user_id'=>$user_id,
             'username' => $username
         ];
         return $result;
-	} 
+	}
+	/**
+     * loginOut 退出
+     * @access public
+     * @return void
+     */
+	public function loginOut(){
+		$cookie = new Cookie('user');
+		$user_id = $cookie->get('user_id');
+        $cookie->clear('username');
+        $cookie->clear('user_id');
+		$login_status_key = sprintf($this->_user_login_status,$user_id);
+		$this->_redis->del($login_status_key);
+	}
 	/**
      * check_user_exists 检测用户是否存在
      * @access public
