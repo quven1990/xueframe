@@ -82,13 +82,14 @@ class UserModel {
 			return $result;
 		}
 		//检测用户是否登录
+		/*
 		$login_status_key = sprintf($this->_user_login_status,$user_id);
 		$login_status = $this->_redis->get($login_status_key);
 		if($login_status){
 			$result['status'] = 'error';
 			$result['msg'] = '该用户已在别处登录,有问题请联系管理员';
 			return $result;
-		}
+		}*/
 		
 		$user_password_redis_key = sprintf($this->_userpassword_key,$user_id);
 		$password_from_redis = $this->_redis->get($user_password_redis_key);
@@ -102,7 +103,7 @@ class UserModel {
         $cookie->set("user_id",$user_id);
         $cookie->set("username",$username);
 		//记录用户登录状态
-		$this->_redis->set($login_status_key,$user_id);
+		//$this->_redis->set($login_status_key,$user_id);
         $result['data'] = [
             'user_id'=>$user_id,
             'username' => $username
@@ -119,8 +120,8 @@ class UserModel {
 		$user_id = $cookie->get('user_id');
         $cookie->clear('username');
         $cookie->clear('user_id');
-		$login_status_key = sprintf($this->_user_login_status,$user_id);
-		$this->_redis->del($login_status_key);
+		//$login_status_key = sprintf($this->_user_login_status,$user_id);
+		//$this->_redis->del($login_status_key);
 	}
 	/**
      * check_user_exists 检测用户是否存在

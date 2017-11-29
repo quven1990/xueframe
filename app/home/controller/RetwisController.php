@@ -78,7 +78,12 @@ class RetwisController extends Controller
         $user_model = new UserModel();
         $user_list = $user_model->getNewers();
 
+		
+		$post_model = new PostModel();
+		$post_list = $post_model->getNewers();
+		
         $this->assign("user_list",$user_list);
+        $this->assign("post_list",$post_list);
 		$this->display();
     }
 	/**

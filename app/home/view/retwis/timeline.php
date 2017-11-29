@@ -8,15 +8,10 @@
 </div>
 
 <br><i>最新的50条微博!</i><br>
+{foreach $post_list(key,value)}
 <div class="post">
-<a class="username" href="profile?u=test">test</a>
-world<br>
-<i>22 分钟前 通过 web发布</i>
+<a class="username" href="/home/retwis/profile/user_id/{@value['user_id']}">{@value['username']}</a>{@value['content']}<br>
+<i>{@value['time']}前 通过 web发布</i>
 </div>
-
-<div class="post">
-<a class="username" href="profile.php?u=test">test</a>
-hello<br>
-<i>22 分钟前 通过 web发布</i>
-</div>
+{/foreach}
 {include "app/home/view/retwis/footer.php"}
