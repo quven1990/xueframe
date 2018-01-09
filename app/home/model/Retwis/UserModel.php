@@ -39,6 +39,16 @@ class UserModel {
 		$this->_redis = Redis::getInstance();
 	}
 	/**
+     * getFollowList 获取我关注的人的集合
+     * @access public
+     * @return void
+     */
+    public function getFollowList($user_id){
+        $follow_key = sprintf($this->_follow,$user_id);
+        $follow_list = $this->_redis->sMembers($follow_key);
+        return $follow_list;
+    }
+	/**
      * register 注册
      * @access public
      * @return void

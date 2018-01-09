@@ -422,6 +422,18 @@ class Redis
     {
         return $this->redis->zRemRangeByScore($key,$start,$end);
     }
+	/**
+     * 移除有序集中，指定排名(rank)区间内的所有成员。
+     * min和max可以是-inf和+inf　表示最大值，最小值
+     * @param unknown $key
+     * @param unknown $start
+     * @param unknown $end
+     * @return 删除成员的数量。
+     */
+    public function zRemRangeByRank($key,$start,$end)
+    {
+        return $this->redis->zRemRangeByRank($key,$start,$end);
+    }
 
     /**
      * 返回集合元素个数。

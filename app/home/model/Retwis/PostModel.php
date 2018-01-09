@@ -8,6 +8,7 @@
 namespace home\model\Retwis;
 use core\Redis;
 use core\Cookie;
+use home\model\Retwis\UserModel;
 /*
  * 帖子模型
  */
@@ -21,8 +22,11 @@ class PostModel {
 	private $_post_new_key;  //最新帖子集合
 	private $_post_key;  //保存帖子的hash 
 	private $_post_scan_list_key; //可见的帖子id集合
-	private $_follower; //粉丝集合
-	private $_redis;
+    private $_follower; //粉丝集合
+
+    private $_post_owner_key;
+    private $_redis;
+    const VISIBLE_LEN = 3;
 	/**
      * __construct 初始化
      * @access public
@@ -37,7 +41,8 @@ class PostModel {
 		$this->_post_key = "post:post_id:%d";
 		$this->_post_scan_list_key = "scan:user_id:%d";  //可见的帖子id集合
 		$this->_follower = "follower:%d";  //粉丝集合
-		$this->_post_new_key = "post_new";
+        $this->_post_new_key = "post_new";
+        $this->_post_owner_key = "post:owner:%d";
 		$this->_redis = Redis::getInstance();
 	}
 	/**
@@ -46,6 +51,8 @@ class PostModel {
      * @return void
      */
 	public function publish($user_id,$username,$content){
+		$post_owner_key = sprintf($this->_post_owner_key,$user_id);
+		
 		$primary_key = $this->getPostPrimaryKey();
 		
 		$post_key = sprintf($this->_post_key,$primary_key);
@@ -57,10 +64,19 @@ class PostModel {
 			'time'     => time()
 		];
 		$this->_redis->hMset($post_key,$data);
+        
+        //将每个人发的帖子插入有序集合，方便粉丝进行拉取
+        $post_owner_key = sprintf($this->_post_owner_key,$user_id);
+        $this->_redis->zAdd($post_owner_key,$data['time'],$primary_key);
+        $count = $this->_redis->zCard($post_owner_key);
 		
+        if($count > self::VISIBLE_LEN){  //控制每个人帖子数长度
+            $this->_redis->zRemRangeByRank($post_owner_key,0,($count-self::VISIBLE_LEN-1));
+        }
+        /*
 		$this->_redis->lpush($this->_post_new_key,$primary_key);
 		$this->_redis->lTrim($this->_post_new_key,0,2);
-		
+         */
 		/*
 		$user_id_key = sprintf($this->_post_userid_key,$primary_key);
 		$user_name_key = sprintf($this->_post_username_key,$primary_key);
@@ -114,7 +130,16 @@ class PostModel {
      * @return void
      */
 	public function contentList($user_id){
-		
+        $user_model = new UserModel();
+        $follow_list = $user_model->getFollowList($user_id);  
+		$follow_list[] = $user_id;  //自己的帖子和自己关注的人发的帖子同时拉取
+        foreach($follow_list as $follow_id){
+			$post_owner_key = sprintf($this->_post_owner_key,$follow_id);
+				
+			//$this->_redis->zAdd($post_owner_key,$data['time'],$primary_key);
+			//$count = $this->_redis->zCard($post_owner_key);
+
+        }
 		/*
 		$scan_list_key = sprintf($this->_post_scan_list_key,$user_id);
 		$sort = [
