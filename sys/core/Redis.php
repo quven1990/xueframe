@@ -348,12 +348,13 @@ class Redis
      *     limit=>array(0,1) 表示从0开始，取一条记录。
      * @return array|bool
      */
-    public function zRangeByScore($key,$start='-inf',$end="+inf",$option=array())
+    public function zRangeByScore($key,$start='-inf',$end="+inf",$option=array('withscores'=>true))
     {
         return $this->redis->zRangeByScore($key,$start,$end,$option);
     }
 
     /**
+     *（此方法不可用）   
      * 集合以order递减排列后，返回指定order之间的元素。
      * min和max可以是-inf和+inf　表示最大值，最小值
      * @param string $key
@@ -364,9 +365,9 @@ class Redis
      *     limit=>array(0,1) 表示从0开始，取一条记录。
      * @return array|bool
      */
-    public function zRevRangeByScore($key,$start='-inf',$end="+inf",$option=array())
+    public function zRevRangeByScore($key,$start='-inf',$end="+inf",$option=array('withscores'=>true))
     {
-        return $this->redis->zRevRangeByScore($key,$start,$end,$option);
+        return $this->redis->zrevrangebyscore($key,$start,$end,$option);
     }
 
     /**
@@ -442,6 +443,16 @@ class Redis
     public function zCard($key)
     {
         return $this->redis->zCard($key);
+    }
+    /**
+     * 计算给定的一个或多个有序集的并集，其中给定 key 的数量必须以 numkeys 参数指定，并将该并集(结果集)储存到 destination 。
+     * @param  $destination  保存返回结果的集合
+     * @param  $sets    需要合并的集合列表
+     * @param  $weitht 权重列表
+     */
+    public function zUnionStore($destination, $sets = [], $weitht=[] ){     
+        return $this->redis->zunionstore($destination, $sets, $weight);
+        
     }
     /*********************队列操作命令************************/
 

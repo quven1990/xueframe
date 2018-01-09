@@ -7,9 +7,10 @@
 <a href="/home/retwis/follow/user_id/<?php echo $this->_vars['user_id']; ?>" class="button">关注ta</a>  
 <?php } ?>   
 
+<?php foreach($this->_vars['content_list'] as $key=>$value){?>
 <div class="post">
-<a class="username" href="profile.php?u=test">test</a>
-hello<br>
-<i>22 分钟前 通过 web发布</i>
+<a class="username" href="/home/retwis/profile/user_id/<?php echo $value['user_id']?>"><?php echo $value['username']?></a><?php echo $value['content']?><br>
+<i><?php echo $value['time']?>前 通过 web发布</i>
 </div>
+<?php } ?>
 <?php include 'app/home/view/retwis/footer.php';?>

@@ -103,11 +103,15 @@ class RetwisController extends Controller
 		if(!$userinfo){
 			Jump::error('没有找到对应的用户信息',2);
 		}
+        
+        $post_model = new PostModel();
+        $content_list = $post_model->getMyContentList($user_id);
 		
 		$follow_status = $user_model->followStatus($user_id,$this->_user_id);
         $this->assign('user_id',$userinfo['user_id']);
         $this->assign("username",$userinfo['username']);
         $this->assign("userinfo",$userinfo);
+        $this->assign("content_list",$content_list);
         $this->assign("follow_status",$follow_status);
         $this->display();
     }
