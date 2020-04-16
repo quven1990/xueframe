@@ -9,9 +9,9 @@ return [
     //数据库相关配置
     'db_host'     =>    '127.0.0.1',
     'db_user'     =>    'root',
-    'db_pwd'     =>    'root',
-    'db_name'     =>    'labframe',
-    'db_table_prefix'     =>    'lab_',    //数据表前缀
+    'db_pwd'     =>    '123456',
+    'db_name'     =>    'Tecent',
+    'db_table_prefix'     => '',    //数据表前缀
     'db_charset'     =>    'utf8',
 
     'default_module'    => 'home',    //默认模块

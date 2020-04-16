@@ -597,9 +597,9 @@ class Redis
      * @param unknown $key
      * @param unknown $value
      */
-    public function set($key,$value)
+    public function set($key, $value, $NX_EX = [])
     {
-        return $this->redis->set($key,$value);
+        return $this->redis->set($key, $value, $NX_EX);
     }
 
     /**
@@ -610,7 +610,6 @@ class Redis
     {
         return $this->redis->get($key);
     }
-
     /**
      * 设置一个有过期时间的key
      * @param unknown $key
@@ -651,6 +650,15 @@ class Redis
         return $this->redis->incr($key);
     }
 
+	 /**
+     * 对key进行自减操作
+     * @param unknown $key
+     * @param unknown $value
+     */
+    public function decr($key)
+    {
+        return $this->redis->decr($key);
+    }
     /*************redis　无序集合操作命令*****************/
 
     /**
