@@ -6,3 +6,5 @@
 location /{
     try_files $uri $uri/ /index.php?$uri&$args;
 }
+20200416
+添加了redis分布式锁
